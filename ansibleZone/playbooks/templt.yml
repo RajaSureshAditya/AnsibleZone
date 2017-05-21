@@ -1,0 +1,12 @@
+---
+- hosts: remote
+  tasks:
+    - name: This Prints the name
+      template:
+        src: /home/ansible/ansibleZone/playbooks/files/test.conf.j2
+        dest: /home/ansible/temp
+
+
+
+
+

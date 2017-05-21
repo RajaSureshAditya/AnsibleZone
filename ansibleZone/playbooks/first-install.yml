@@ -1,0 +1,26 @@
+---
+- hosts: remote
+  tasks:
+    - name: install tree in ubuntu
+      apt: 
+        name: tree
+        state: latest
+      when: ansible_distribution == "Ubuntu"
+    - name: install nmap in Ubuntu
+      apt: 
+        name: nmap
+        state: latest
+      when: ansible_distribution == "Ubuntu"
+    - name: this is for only redhat family
+      yum:
+        name: tree
+        state: present
+      when: ansible_distribution == "RedHat"
+    - name: this is for only redhat family
+      yum:
+        name: nmap
+        state: present
+      when: ansible_distribution == "RedHat"
+
+
+     
