@@ -1,0 +1,9 @@
+---
+- hosts: redhat 
+  tasks:
+    - name: print a variable
+      command: "ls -lart /home/ansible"
+      register: valtemp
+    - name: print on command prompt
+      debug: 
+        msg: "{{ valtemp }}"

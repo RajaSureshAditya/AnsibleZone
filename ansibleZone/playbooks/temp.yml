@@ -1,0 +1,60 @@
+---
+- hosts: dbservers
+  become: yes
+  tasks:
+#    - name: move to opt
+#      command: "sudo apt_get install -y yum"
+#      when: "ansible_distribution == Ubuntu"
+#    - yum:
+#        name: sudo apt-get install openjdk-6-jdk
+     - name: get the url java from tar
+       get_url:
+         url=http://download.oracle.com/otn-pub/java/jdk/8u131-b11-demos/d54c1d3a095b4ff2b6607d096fa80163/jdk-8u131-linux-x64-demos.tar.gz
+         dest=/opt/
+     - unarchive:
+         src: /opt/jdk-8u131-linux-x64-demos.tar.gz
+         dest: /opt/
+         remote_src: True
+#     - name: Extract tar
+#       command: "tar -xvzf /opt/jdk-8u131-linux-x64-demos.tar.gz -C /opt/"
+     - name: add user "tomcat"
+       user: name=tomcat  home=/usr/share/tomcat createhome=no
+       become: True
+       become_method: sudo
+     - name: Download Tomcat
+       get_url:
+         url=http://archive.apache.org/dist/tomcat/tomcat-7/v7.0.61/bin/apache-tomcat-7.0.61.tar.gz
+         dest=/opt/apache-tomcat-7.0.61.tar.gz
+     - unarchive:
+         src: /opt/apache-tomcat-7.0.61.tar.gz
+         dest: /opt/
+         remote_src: True
+#     - name: Extract Tomcat tar
+#       command: "tar -xvzf /opt/apache-tomcat-7.0.61.tar.gz -C /opt/"
+#     - name: create a file conf in /usr/share/tomcat/conf 
+#       file:
+#         path: /usr/share/tomcat/conf
+#         state: directory
+     - name: making absent /usr/share/tomcat to that i can link to other location when requested this path
+       file: 
+         name: /usr/share/tomcat
+         state: absent 
+     - name: link the /usr/share/tomcat/ to tomcat in opt
+       file: 
+         src: /opt/apache-tomcat-7.0.61 
+         path: /usr/share/tomcat 
+         state: link
+         force: yes
+     - name: Change ownership of Tomcat installation
+       file: path=/usr/share/tomcat/ owner=tomcat state=directory recurse=yes
+     - name: Configure Tomcat users
+       template: 
+         src: /home/ansible/ansibleZone/playbooks/files/tomcat-users.xml 
+         dest: /usr/share/tomcat/conf/
+     - name: service restart
+       service: 
+         name: tomcat
+         state: restarted        
+#       notify: restart tomcat 
+     - name: run command on remote server
+       command: "cd /opt/apache-tomcat-7.0.61/bin && sh startup.sh"

@@ -1,5 +1,5 @@
 ---
-- hosts: ubuntu
+- hosts: {{ repot }}
   become: yes
   tasks:
     - name: Install if it is Ubuntu system

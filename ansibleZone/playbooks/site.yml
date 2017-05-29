@@ -1,0 +1,17 @@
+---
+- hosts:
+  tasks:
+    - name: install java
+      yum:
+        name: java-1.7.0-openjdk-devel
+        state: install
+    - name: install tomcat
+      yum: 
+        name: tomcat7
+        state: install
+    - name: install mysql
+      yum:
+        name: mysql
+        state: install   
+
+
