@@ -1,0 +1,16 @@
+{% for i in preansible %}	
+			ansibleTower (
+                                                        credential: '',
+                                                        extraVars: '',
+                                                        importTowerLogs: true,
+                                                        importWorkflowChildLogs: false,
+                                                        inventory: '',
+                                                        jobTags: '',
+                                                        jobTemplate: {{ i }},
+                                                        limit: '',
+                                                        removeColor: false,
+                                                        templateType: 'job',
+                                                        towerServer: 'ansibletowerurl',
+                                                        verbose: true
+                                                                        )
+               {% endfor %}

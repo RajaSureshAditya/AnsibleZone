@@ -1,0 +1,60 @@
+---
+ - hosts: localhost
+   become: yes
+   vars_files:
+     - vars.yaml
+   tasks:
+   - name: create Jenkinsfile_teamname file
+     template:
+       src: Jenkinsfile.j2
+       dest: Jenkinsfile_{{ teamname }}
+       mode: 0777
+   - name: Get template name and playbookname 
+     uri:
+       url: "https://{{ ansible_tower_api_url }}/api/v2/job_templates/{{ item }}/" 
+       method: GET 
+       headers:
+         Authorization: "Bearer {{ token }}"
+         Content-Type: "application/json"
+       body_format: json 
+       force_basic_auth: yes 
+       validate_certs: false 
+       status_code: 200,201,302 
+     register: check
+     delegate_to: localhost
+     with_items: 
+     - "{{ preansible }}"
+   - name: create json for payload
+     template:
+       src: client_json.j2
+       dest: {{ item.json['id'] }}.json
+       mode: 0777
+     with_items: 
+     - "{{ check.results }}"
+
+
+   - name: test
+     debug: msg="{{ lookup('file','{{ item }}.json') }}"
+     with_items:
+     - "{{ preansible }}"
+
+   - name: Add inventory_id to the playbooks
+     uri:
+       url: "https://{{ ansible_tower_api_url }}/api/v2/job_templates/{{ item }}/"
+       method: PUT
+       headers:
+         Authorization: "Bearer {{ token }}"
+         Content-Type: "application/json"
+#       body: >
+#         {"name":"{{ item.json['name'] }}","playbook":"{{ item.json['playbook']}}","inventory":{{ inv_id|int }}}
+       body: "{{ lookup('file','{{ item }}.json') }}"
+       body_format: json
+       return_content: yes
+       force_basic_auth: yes
+       validate_certs: false
+       status_code: 200,201,302
+     register: response
+     delegate_to: localhost
+     with_items:
+     - "{{ preansible }}"
+
