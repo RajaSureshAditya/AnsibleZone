@@ -5,6 +5,6 @@
    - name: create c1vars.yaml
      template:
        src: template_vars.j2
-       dest: vars.yaml
+       dest: ../vars.yaml
        mode: 0777
 
