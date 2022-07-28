@@ -1,8 +1,0 @@
---- 
-- hosts: dbservers
-  tasks:
-    - name: lineinfile example
-      lineinfile:
-        path: /home/ansible/adityahostname
-        regexp: '^Hostname=*'
-        line: 'Hostname=local'

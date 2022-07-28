@@ -1,9 +1,0 @@
----
-- hosts: dbservers
-  tasks:
-    - name: create a file 
-      file:
-        src: "{{ log_folders }}"
-        dest: /home/ansible/test
-        state: touch
-      when: ansible_distribution == "RedHat"

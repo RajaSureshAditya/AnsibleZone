@@ -1,6 +1,0 @@
----
-- hosts: "{{ repot }}"
-  tasks:
-    - package:
-        name: "{{ package_name }}"
-        state: latest
